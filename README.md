@@ -42,8 +42,6 @@ La función de instalación de dependencias comprueba los paquetes requeridos, e
 
 ## Instalación para un usuario nuevo
 
-**No se requiere una instalación previa de CIPAT o PhenoImage.**
-
 1. Solicite acceso al repositorio privado y acepte la invitación.
 2. En GitHub, seleccione **Code → Download ZIP** y descomprima el archivo completo.
 3. En RStudio, detenga cualquier sesión de PhenoImage y seleccione **Session → Restart R**.
@@ -90,7 +88,7 @@ Seleccione el archivo `.tar.gz` cuando aparezca el selector. La primera instrucc
 
 Puede analizar sus propios datos sin descargar ejemplos. Los ortomosaicos de demostración se distribuyen por separado del código de la aplicación.
 
-Descargue los conjuntos desde [**Datos de ejemplo de PhenoImage**](https://github.com/RiquelmerVelazquez/PhenoImage/releases/tag/datos-ejemplo). En esa publicación encontrará los siguientes archivos:
+Descargue los conjuntos desde [**Datos de ejemplo de PhenoImage**](https://github.com/CIPAT-PAPALOTLA/PhenoImage/releases/tag/datos-ejemplo). En esa publicación encontrará los siguientes archivos:
 
 - `PhenoImage_Ejemplo_RGB.zip`: ortomosaico RGB, CHM y polígonos de parcelas.
 - `PhenoImage_Ejemplo_Sentera.zip`: multibanda Sentera y polígonos de parcelas.
@@ -153,4 +151,4 @@ PhenoImage se desarrolla como parte de las actividades de análisis de imágenes
 
 Para informar de un problema, utilice **Issues** del repositorio privado e indique la versión instalada, el módulo, el mensaje de error y los pasos necesarios para reproducirlo. Adjunte únicamente los datos del ensayo que cuenten con autorización para compartirse.
 
-El archivo `VERIFICACION.txt` describe las comprobaciones técnicas realizadas y su alcance. Las publicaciones y los archivos de instalación se encuentran en **Releases** del [repositorio de PhenoImage](https://github.com/RiquelmerVelazquez/PhenoImage).
+El archivo `VERIFICACION.txt` describe las comprobaciones técnicas realizadas y su alcance. Las publicaciones y los archivos de instalación se encuentran en **Releases** del [repositorio de PhenoImage](https://github.com/CIPAT-PAPALOTLA/PhenoImage).
