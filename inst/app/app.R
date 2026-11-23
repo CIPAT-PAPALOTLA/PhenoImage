@@ -965,7 +965,7 @@ server <- function(input, output, session) {
   })
   mostrar_media <- function(columna, decimales = 2, sufijo = "") {
     x <- ultima()
-    if (is.null(x) || !columna %in% names(x$tabla)) return("—")
+    if (is.null(x) || is.na(columna) || !columna %in% names(x$tabla)) return("—")
     v <- x$tabla[[columna]]; v <- v[is.finite(v)]
     if (!length(v)) return("Sin datos")
     paste0(formatC(mean(v), digits = decimales, format = "f"), sufijo)
@@ -974,7 +974,10 @@ server <- function(input, output, session) {
   output$etiqueta_rasgo <- renderText({ if (is.null(ultima())) "Rasgo seleccionado" else etiqueta_eda(resumen_datos_cipat(ultima())$campo_rasgo) })
   output$etiqueta_umbral <- renderText({ if (input$tipo == "phantom") "Umbral ExG" else "Umbral NDVI" })
   output$kpi_parcelas <- renderText({ if (is.null(ultima())) "—" else as.character(nrow(ultima()$tabla)) })
-  output$kpi_cobertura <- renderText({ mostrar_media(if (!is.null(ultima()) && "Plant_ground_cover_image_Green_pct" %in% names(ultima()$tabla)) "Plant_ground_cover_image_Green_pct" else if (!is.null(ultima()) && "Plant_ground_cover_image_Vegetation_pct" %in% names(ultima()$tabla)) "Plant_ground_cover_image_Vegetation_pct" else if (input$tipo == "phantom") "Plant_ground_cover_image_RGB_pct" else "Plant_ground_cover_image_NDVI_pct", 1, "%") })
+  output$kpi_cobertura <- renderText({
+    x <- ultima()
+    if (is.null(x)) "—" else mostrar_media(columnas_cobertura_verde_cipat(x$tabla, x$tipo)[1], 1, "%")
+  })
   output$kpi_ndvi <- renderText({ if (is.null(ultima())) "—" else mostrar_media(resumen_datos_cipat(ultima())$campo_rasgo, 3) })
   output$kpi_umbral <- renderText({ x <- ultima(); if (is.null(x)) "—" else if (identical(x$fuentes$metodo, "Muestras")) "Por muestras" else if (!is.finite(x$umbral)) "No aplica" else formatC(x$umbral, digits = 3, format = "f") })
   output$etiqueta_resultado <- renderUI({

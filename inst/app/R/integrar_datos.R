@@ -251,7 +251,9 @@ registrar_integracion <- function(input, output, session, actuales) {
         ib_preparar(r(),"RGB",input$ib_r_id,input$ib_r_lote,input$ib_r_fecha), isTRUE(input$ib_uno))
       exportacion(z)
       opciones <- z$diccionario$Columna
-      preferidas <- c("NDVI_mean", "Plant_ground_cover_image_NDVI_pct", "Plant_ground_cover_image_RGB_pct", "Canopy_height_image_p90")
+      preferidas <- c("NDVI_mean", columnas_cobertura_verde_cipat(z$tabla, "integrado"),
+        columnas_cobertura_cipat("Sentera", "Muestras", TRUE)[2],
+        columnas_cobertura_cipat("RGB", "Muestras", TRUE)[2], "Canopy_height_image_p90")
       shiny::updateSelectizeInput(session,"ib_variables",choices=opciones,selected=intersect(preferidas,opciones),server=TRUE)
       shiny::showNotification("Base integrada preparada. Revisa las coincidencias antes de descargar.",type="message",duration=5)
     }, error=function(e) shiny::showNotification(conditionMessage(e),type="error",duration=NULL))

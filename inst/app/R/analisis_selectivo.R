@@ -200,16 +200,14 @@ procesar_seleccion_cipat <- function(p) {
     }
     if ("cobertura" %in% p$grupos) {
       registrar("Calculando cobertura por clases con un único denominador válido")
+      incluir_seco <- FALSE
       if (p$metodo == "Muestras") {
-        q <- resumen_clases_cobertura_cipat(clases, polys, any(p$muestras$modelo$clases == 2L))
+        incluir_seco <- any(p$muestras$modelo$clases == 2L)
+        q <- resumen_clases_cobertura_cipat(clases, polys, incluir_seco)
       } else {
         q <- resumen_cobertura(mask, polys)
-        q$veg_area_m2 <- q$veg_pix * prod(terra::res(mask)); q$polygon_area_m2 <- as.numeric(sf::st_area(polys))
-        q$valid_area_pct <- 100 * q$total_pix * prod(terra::res(mask)) / q$polygon_area_m2
-        q <- q[c("pct", "veg_area_m2", "polygon_area_m2", "valid_area_pct")]
-        names(q) <- paste0("Plant_ground_cover_image_Green_", names(q))
       }
-      tabla <- cbind(tabla, q)
+      tabla <- cbind(tabla, exportar_cobertura_cipat(q, p$tipo, p$metodo, incluir_seco))
     }
   }
   if ("altura" %in% p$grupos) {

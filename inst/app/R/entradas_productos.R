@@ -230,6 +230,12 @@ metrica_producto_cipat <- function(capa, tabla, tipo) {
     `Textura Entropy` = "RGB_Entropy_mean", `Textura Contrast` = "RGB_Contrast_mean", `Textura Homogeneity` = "RGB_Homogeneity_mean", `NDVI · vegetación` = "NDVI_mean")
   if ("Plant_ground_cover_image_Green_pct" %in% names(tabla)) especiales["Máscara de vegetación"] <- "Plant_ground_cover_image_Green_pct"
   especiales["Máscara de clases por muestras"] <- "Plant_ground_cover_image_Total_pct"
+  verde <- columnas_cobertura_verde_cipat(tabla, tipo)
+  if (length(verde)) especiales["Máscara de vegetación"] <- verde[1]
+  muestras <- columnas_cobertura_cipat(tipo, "Muestras")
+  if (muestras %in% names(tabla)) especiales[c("Máscara por muestras", "Máscara de clases por muestras")] <- muestras
+  indice <- columnas_cobertura_cipat(tipo, "Otsu")
+  if (indice %in% names(tabla)) especiales[if (tipo == "phantom") "Máscara RGB" else "Máscara NDVI"] <- indice
   nombre <- if (capa %in% names(especiales)) especiales[[capa]] else paste0(capa, "_mean")
   if (!nombre %in% names(tabla) && capa %in% c("Red", "Green", "Blue", "RE", "NIR")) {
     nombre <- paste0(if (tipo == "phantom") "RGB_" else "Sentera_", capa, "_mean")

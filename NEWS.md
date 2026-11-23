@@ -2,6 +2,12 @@
 
 Entrega unificada basada en E28, con los cambios acumulados de E24–E28.
 
+## Exportación de cobertura
+
+- Nombres de cobertura por origen y clasificación, iguales en la tabla
+  individual y la integrada. Solo se exporta el porcentaje verde y, si se
+  clasificó esa clase por muestras, el porcentaje seco.
+
 ## Análisis seleccionables (E24)
 
 - Elegir análisis completo o personalizado antes de cargar archivos.

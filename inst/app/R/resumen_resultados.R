@@ -4,12 +4,12 @@ resumen_texto_cipat <- function(x) {
 }
 resumen_datos_cipat <- function(x) {
   d <- x$tabla; n <- nrow(d); rgb <- identical(x$tipo,"phantom")
-  cobertura <- if ("Plant_ground_cover_image_Green_pct" %in% names(d)) "Plant_ground_cover_image_Green_pct" else if ("Plant_ground_cover_image_Vegetation_pct" %in% names(d)) "Plant_ground_cover_image_Vegetation_pct" else if(rgb) "Plant_ground_cover_image_RGB_pct" else "Plant_ground_cover_image_NDVI_pct"
+  cobertura <- columnas_cobertura_verde_cipat(d, x$tipo)[1]
   preferencias <- c(if(rgb) "Canopy_height_image_p90" else "NDVI_mean", grep("_mean$", names(d), value = TRUE), cobertura)
   candidatas <- preferencias[preferencias %in% names(d)]
   rasgo <- if (length(candidatas)) candidatas[1] else "No solicitado"
   valor <- function(k) {
-    if(!k %in% names(d) || !is.numeric(d[[k]])) return(rep(NA_real_,n))
+    if(is.na(k) || !k %in% names(d) || !is.numeric(d[[k]])) return(rep(NA_real_,n))
     v <- as.numeric(d[[k]]); v[!is.finite(v)] <- NA_real_; v
   }
   cv <- valor(cobertura); rv <- valor(rasgo)

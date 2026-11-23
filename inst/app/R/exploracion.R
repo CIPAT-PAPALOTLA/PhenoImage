@@ -1,5 +1,10 @@
 # Análisis descriptivo de valores por parcela. No modifica los procesamientos.
 etiqueta_eda <- function(nombre) {
+  if (grepl("^Plant_ground_cover_image_(Sentera_(NDVI|Muestras)|RGB_(ExG|Muestras))_(Green|Dry)_pct$", nombre)) {
+    partes <- strsplit(nombre, "_", fixed = TRUE)[[1]]
+    clase <- if (partes[7] == "Dry") "Cobertura seca" else "Cobertura verde"
+    return(paste0(clase, " · ", partes[5], " · ", partes[6], " (%)"))
+  }
   especiales <- c(Plant_ground_cover_image_Green_pct = "Cobertura verde (%)", Plant_ground_cover_image_Dry_pct = "Material vegetal seco (%)", Plant_ground_cover_image_Bare_soil_pct = "Suelo descubierto (%)", Plant_ground_cover_image_Total_pct = "Cobertura vegetal total (%)", Plant_ground_cover_image_Vegetation_pct = "Cobertura vegetal · máscara elegida (%)", Plant_ground_cover_image_Muestras_RGB_pct = "Cobertura por muestras · RGB (%)", Plant_ground_cover_image_Muestras_Sentera_pct = "Cobertura por muestras · Sentera (%)", Plant_ground_cover_image_NDVI_pct = "Cobertura NDVI (%)",
     Plant_ground_cover_image_RGB_pct = "Cobertura RGB · ExG (%)",
     HSB_Hue_mean = "Tono HSB · promedio (grados)", HSB_Saturation_mean = "Saturación HSB · promedio (%)",
@@ -36,7 +41,7 @@ variables_eda <- function(df) {
 variables_basicas_eda <- function(df) {
   todas <- variables_eda(df); n <- unname(todas)
   principal <- grepl("_mean$", n) | n == "Canopy_height_image_p90" |
-    grepl("^Plant_ground_cover_image_(Green|Dry|Bare_soil|Total|Vegetation|NDVI|RGB|Muestras_RGB|Muestras_Sentera)_pct$", n)
+    grepl("^Plant_ground_cover_image_(Green|Dry|Bare_soil|Total|Vegetation|NDVI|RGB|Muestras_RGB|Muestras_Sentera|Sentera_(NDVI|Muestras)_(Green|Dry)|RGB_(ExG|Muestras)_(Green|Dry))_pct$", n)
   evaluada <- vapply(df[n], function(v) any(is.finite(v)), logical(1))
   todas[principal & evaluada]
 }
@@ -189,7 +194,7 @@ registrar_exploracion <- function(input, output, session, ultima, datos, agrupac
     preferida <- elegir_variable_eda(opciones,shiny::isolate(input$eda_variable),
       if (x$tipo == "phantom") c("Canopy_height_image_mean","Canopy_height_image_p90") else "NDVI_mean")
     alternativa <- elegir_variable_eda(opciones,shiny::isolate(input$eda_variable_y),
-      c("Plant_ground_cover_image_Green_pct","Canopy_height_image_p90","NDVI_mean"),excluir=preferida)
+      c(columnas_cobertura_verde_cipat(datos()$tabla, x$tipo),"Canopy_height_image_p90","NDVI_mean"),excluir=preferida)
     grupo_actual <- shiny::isolate(agrupacion())
     if (!grupo_actual %in% unname(datos()$grupos)) grupo_actual <- "__ninguno__"
     tagList(
@@ -241,7 +246,7 @@ registrar_exploracion <- function(input, output, session, ultima, datos, agrupac
     principal <- elegir_variable_eda(opciones,shiny::isolate(input$eda_variable),
       if (identical(x$tipo,"phantom")) c("Canopy_height_image_mean","Canopy_height_image_p90") else "NDVI_mean")
     segunda <- elegir_variable_eda(opciones,shiny::isolate(input$eda_variable_y),
-      c("Plant_ground_cover_image_Green_pct","Canopy_height_image_p90","NDVI_mean"),excluir=principal)
+      c(columnas_cobertura_verde_cipat(datos()$tabla, x$tipo),"Canopy_height_image_p90","NDVI_mean"),excluir=principal)
     shiny::updateSelectInput(session,"eda_variable",choices=opciones,selected=principal)
     shiny::updateSelectInput(session,"eda_variable_y",choices=opciones,selected=segunda)
   },ignoreNULL=FALSE)

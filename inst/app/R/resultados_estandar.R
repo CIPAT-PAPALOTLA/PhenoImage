@@ -20,6 +20,32 @@ crear_carpeta_resultados_cipat <- function(base, lote, fecha, sensor) {
   normalizePath(ruta, winslash = "/", mustWork = TRUE)
 }
 
+columnas_cobertura_cipat <- function(tipo, metodo, incluir_seco = FALSE) {
+  rgb <- tipo %in% c("phantom", "RGB")
+  origen <- if (rgb) "RGB" else "Sentera"
+  base <- if (identical(metodo, "Muestras")) "Muestras" else if (rgb) "ExG" else "NDVI"
+  clases <- c("Green", if (identical(base, "Muestras") && isTRUE(incluir_seco)) "Dry")
+  paste("Plant_ground_cover_image", origen, base, clases, "pct", sep = "_")
+}
+
+exportar_cobertura_cipat <- function(tabla, tipo, metodo, incluir_seco = FALSE) {
+  columnas <- if (identical(metodo, "Muestras")) {
+    paste0("Plant_ground_cover_image_", c("Green_pct", if (isTRUE(incluir_seco)) "Dry_pct"))
+  } else "pct"
+  tabla <- tabla[columnas]
+  names(tabla) <- columnas_cobertura_cipat(tipo, metodo, incluir_seco)
+  tabla
+}
+
+columnas_cobertura_verde_cipat <- function(tabla, tipo) {
+  if (identical(tipo, "integrado")) return(unique(c(
+    columnas_cobertura_verde_cipat(tabla, "sentera"), columnas_cobertura_verde_cipat(tabla, "phantom"))))
+  nuevas <- c(columnas_cobertura_cipat(tipo, "Muestras"), columnas_cobertura_cipat(tipo, "Otsu"))
+  historicas <- paste0("Plant_ground_cover_image_", c("Green_pct", "Vegetation_pct",
+    if (tipo %in% c("phantom", "RGB")) c("RGB_pct", "Muestras_RGB_pct") else c("NDVI_pct", "Muestras_Sentera_pct")))
+  intersect(c(nuevas, historicas), names(tabla))
+}
+
 normalizar_resultados_cipat <- function(d, sensor = "integrado") {
   n <- names(d)
   # Eliminar solo los campos expresamente retirados, también al importar bases antiguas.
@@ -39,7 +65,7 @@ normalizar_resultados_cipat <- function(d, sensor = "integrado") {
   altura <- grep("^Canopy_height_image_", n, value = TRUE)
   cov_n <- paste0("Plant_ground_cover_image_NDVI_", c("pct", "veg_area_m2", "polygon_area_m2", "valid_area_pct"))
   cov_r <- paste0("Plant_ground_cover_image_RGB_", c("pct", "veg_area_m2", "polygon_area_m2", "valid_area_pct"))
-  cov_m <- grep("^Plant_ground_cover_image_(Muestras|Vegetation|Green|Dry|Bare_soil|Total)_", n, value = TRUE)
+  cov_m <- grep("^Plant_ground_cover_image_(Muestras|Vegetation|Green|Dry|Bare_soil|Total|Sentera_NDVI|Sentera_Muestras|RGB_ExG|RGB_Muestras)_", n, value = TRUE)
   pref_color <- c("HSB_Hue", "HSB_Saturation", "HSB_Brightness", "DGCI", "Lab_L", "Lab_a", "Lab_b")
   color <- unlist(lapply(pref_color, function(p) grep(paste0("^", p, "_"), n, value = TRUE)), use.names = FALSE)
   textura <- unlist(lapply(c("RGB_Entropy", "RGB_Contrast", "RGB_Homogeneity"),

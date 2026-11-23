@@ -110,35 +110,29 @@ modificación y asignación de bandas. Se releen los píxeles del archivo origin
 Las muestras son propias de cada módulo e imagen; no se transfieren automáticamente.
 
 RESULTADOS Y NOMBRES EN INGLÉS
-Con Cobertura seleccionada:
-- Otsu y umbral manual: Plant_ground_cover_image_Green_pct.
-  Su complemento es fondo (puede incluir suelo y material seco); no se reporta
-  como suelo descubierto ni se inventa una cobertura seca o total.
-- Por muestras: cuatro porcentajes con el prefijo Plant_ground_cover_image_:
-  Green_pct: vegetación verde.
-  Dry_pct: material vegetal seco; NA/no evaluado si se eligieron dos clases.
-  Bare_soil_pct: suelo clasificado.
-  Total_pct: verde + seco con tres clases; igual a verde con dos clases.
-- En tres clases, verde + seco + suelo = 100 % del área válida.
-  En dos clases, verde + suelo = 100 % del área válida. No entrenar la clase
-  seca NO demuestra ausencia de material seco: revisa antes la imagen.
-- Todos los porcentajes comparten el área válida como denominador. NoData se
-  excluye, no se convierte en suelo. Una parcela sin píxeles válidos tiene
-  porcentajes NA. Se conserva el ID original de cada parcela.
-- También se exportan áreas por clase, área de la parcela y porcentaje de área
-  válida. Para muestras: Green_veg_area_m2, Dry_veg_area_m2,
-  Bare_soil_area_m2, Total_veg_area_m2, polygon_area_m2 y valid_area_pct,
-  todos con el prefijo Plant_ground_cover_image_.
-- Los porcentajes/áreas secas no evaluados se guardan como NA en CSV y celdas
-  vacías en Excel; Parametros registra expresamente que seco no fue evaluado.
+Con Cobertura seleccionada, la tabla individual y la integrada usan los
+mismos encabezados:
+- Sentera con NDVI (Otsu o umbral manual):
+  Plant_ground_cover_image_Sentera_NDVI_Green_pct
+- RGB con ExG (Otsu o umbral manual):
+  Plant_ground_cover_image_RGB_ExG_Green_pct
+- Sentera por muestras:
+  Plant_ground_cover_image_Sentera_Muestras_Green_pct
+  Plant_ground_cover_image_Sentera_Muestras_Dry_pct (si se clasificó seco)
+- RGB por muestras:
+  Plant_ground_cover_image_RGB_Muestras_Green_pct
+  Plant_ground_cover_image_RGB_Muestras_Dry_pct (si se clasificó seco)
+- El área válida es el denominador. Una parcela sin píxeles válidos tiene
+  porcentajes NA. Si se clasificó seco y no se detectó en una parcela con
+  datos válidos, su cobertura seca vale 0.
+- Parametros conserva el método y el umbral aplicado cuando corresponde.
 - La máscara elegida filtra bandas, índices, color y texturas SOLO por verde.
   La altura mantiene su filtro independiente. Sin solicitar Cobertura no se
   exportan porcentajes adicionales.
 - Mascara_Vegetacion es la máscara binaria verde utilizada para estadísticas.
   Por muestras se añade Mascara_Clases_Muestras: 0=suelo, 1=verde, 2=seco si se
   entrenó. El visor y la vista previa usan café, verde y amarillo. La capa de
-  clases muestra la cobertura total en la ficha de parcela; la máscara verde
-  muestra cobertura verde. Ambas proceden de la misma clasificación.
+  clases y la máscara verde muestran la cobertura verde en la ficha de parcela.
 - CSV y respaldo RDS se guardan antes del Excel. La hoja Productos permite
   reabrir las capas. Los resultados antiguos conservan compatibilidad de lectura.
 - Los CSV de muestras nuevos conservan si la clase seca estaba activada.
